@@ -1,9 +1,10 @@
-import type { CreditSaldsAndMovements, Movement } from "../types/SaldAndMovements";
+import { CardType, MovementType, type Movement } from "../types/Movement";
+import type { CreditSaldsAndMovements } from "../types/SaldAndMovements";
+import type { Bank } from "./Banks";
 
-export const processCreditMovements = (data : any[]) : CreditSaldsAndMovements => {
+const processCreditMovements = (data : any[]) : CreditSaldsAndMovements => {
 
     ///Columns 1-7 are metadata
-    console.log(data)
     const card = data[2].__EMPTY_2;
     const name = data[0].__EMPTY_2;
 
@@ -21,18 +22,19 @@ export const processCreditMovements = (data : any[]) : CreditSaldsAndMovements =
 
 
         const installmentsArr = x.__EMPTY_7.split("/")
+        const amount = x.__EMPTY_10
         return {
             date: x.__EMPTY_1,
-            origin: x.__EMPTY_2,
+            source: {card: CardType.CREDIT, description: x.__EMPTY_2},
             description: x.__EMPTY_4,
-            city:x.__EMPTY_6 ?? "SIN INFORMACIÓN",
+            origin:x.__EMPTY_6 ?? "SIN INFORMACIÓN",
             installments: {
                 current: Number(installmentsArr.at(0)),
                 total: Number(installmentsArr.at(1))
             },
-            amount: x.__EMPTY_10,
+            amount: amount,
             currency: "CLP",
-            type:"EGRESS"
+            type: amount > 0 ? MovementType.EXPENSE : MovementType.NEUTRAL
         }
     })
 
@@ -50,5 +52,9 @@ export const processCreditMovements = (data : any[]) : CreditSaldsAndMovements =
 
     return result
 
+}
+
+export const BancoDeChile = {
+    processCreditMovements,
 }
 

@@ -1,16 +1,4 @@
-export interface Movement {
-    date: string;
-    origin: string;
-    description: string;
-    city: string;
-    installments: {
-        current: number;
-        total: number;
-    }
-    amount: number;
-    currency: string;
-    type: "INGRESS" | "EGRESS"
-}
+import type { Movement } from "./Movement";
 
 export interface CreditSaldsAndMovements {
     card: string

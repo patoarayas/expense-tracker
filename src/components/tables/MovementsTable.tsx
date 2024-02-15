@@ -1,67 +1,176 @@
-import React, { useContext, useReducer } from "react";
-import { reducer, setInitialState } from "../../utils/store/MovementsReducer";
-import { MovementsContext } from "../../utils/store/MovementsContext";
+import React, {
+  useContext,
+  useEffect,
+  useMemo,
+  useReducer,
+  useState,
+} from "react";
+import {
+  MovementType,
+  type Movement,
+  type MovementFilter,
+} from "../../utils/types/Movement";
+import {
+  Button,
+  Chip,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
+  Table,
+  TableBody,
+  TableCell,
+  TableColumn,
+  TableHeader,
+  TableRow,
+} from "@nextui-org/react";
+import Icon from "@mdi/react";
+import { mdiDotsVertical } from "@mdi/js";
+import CategorizationField from "./partials/CategorizationField";
+import { CategoriesContext } from "../../utils/store/CategoriesContext";
+import { dateStringToDate } from "../../utils/helpers";
 
-const MovementsTable = () => {
-  const movements = useContext(MovementsContext)
-  const currencyFormatter = new Intl.NumberFormat('es-CL',{style: 'currency', currency:'CLP'})
-  if (movements.length > 0 ) {
-    return (
-      <div className="overflow-hidden rounded-lg border border-gray-200 shadow-md">
-        <table className="w-full border-collapse bg-white text-left text-sm text-gray-500">
-          <thead className="bg-gray-50">
-            <tr>
-              <th scope="col" className="px-6 py-4 font-medium text-gray-900">
-                Movimiento
-              </th>
-              <th scope="col" className="px-6 py-4 font-medium text-gray-900">
-                Fecha
-              </th>
-              <th scope="col" className="px-6 py-4 font-medium text-gray-900">
-                Monto
-              </th>
-              <th scope="col" className="px-6 py-4 font-medium text-gray-900">
-                Tipo
-              </th>
-              <th
-                scope="col"
-                className="px-6 py-4 font-medium text-gray-900"
-              ></th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-100 border-t border-gray-100">
-            {movements.map((movement) => {
-              return (
-                <tr className="hover:bg-gray-50">
-                  <th className="px-6 py-4 font-medium text-gray-900">
-                    <span className="block">{movement.description}</span>
-                    <span className="block font-normal">{movement.origin}</span>
-                  </th>
-                  <td className="px-6 py-4">
-                    <p>{movement.date}</p>
-                    
-                    </td>
-                  <td className="px-6 py-4">{currencyFormatter.format(movement.amount)}</td>
-                  <td className="px-6 py-4">
-                    <span className={`inline-flex items-center gap-1 rounded-full  px-2 py-1 text-xs font-semibold ${movement.type === 'INGRESS' ? 'text-green-600 bg-green-50' : 'text-red-600 bg-red-50'}`}>
-                     
-                      {movement.type === "INGRESS" ? 'Pago' : 'Gasto' }
-                    </span>
-                  </td>
-                  <td className="flex justify-end gap-4 px-6 py-4 font-medium">
-                    <a href="">Delete</a>
-                    <a href="" className="text-primary-700">
-                      Edit
-                    </a>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
-    );
-  }
+interface IMovementsTable {
+  movements: Movement[];
+}
+const MovementsTable = ({ movements }: IMovementsTable) => {
+  const categories = useContext(CategoriesContext);
+
+  const [filters, setFilters] = useState<MovementFilter>({
+    dateStart: undefined,
+    dateEnd: undefined,
+  });
+
+  const filterMovements = (
+    movements: Movement[],
+    filters: MovementFilter
+  ): Movement[] => {
+    let movArr = [...movements];
+    if (filters.dateStart !== undefined) {
+      movArr = movArr.filter(
+        (x) => dateStringToDate(x.date) >= filters.dateStart!
+      );
+    }
+    if (filters.dateEnd !== undefined) {
+      movArr = movArr.filter(
+        (x) => dateStringToDate(x.date) <= filters.dateEnd!
+      );
+    }
+    return movArr;
+  };
+
+  const movementsToDisplay: Movement[] = useMemo((): Movement[] => {
+    return filterMovements(movements, filters);
+  }, [movements, filters]);
+
+  const currencyFormatter = new Intl.NumberFormat("es-CL", {
+    style: "currency",
+    currency: "CLP",
+  });
+
+  const columns = [
+    { id: "description", name: "Movimiento" },
+    { id: "categorization", name: "Categoría" },
+    { id: "date", name: "Fecha" },
+    { id: "amount", name: "Monto" },
+    { id: "type", name: "Tipo" },
+    { id: "actions", name: "Acciones" },
+  ];
+
+  const colorByMovement = (
+    movementType: MovementType
+  ): "danger" | "success" | "default" => {
+    switch (movementType.toString()) {
+      case MovementType.EXPENSE.toString():
+        return "danger";
+      case MovementType.INCOME.toString():
+        return "success";
+      case MovementType.NEUTRAL.toString():
+        return "default";
+      default:
+        return "default";
+    }
+  };
+
+  const renderCell = React.useCallback(
+    (movement: Movement, columnKey: React.Key) => {
+      //const cellValue = movement[columnKey as keyof Movement];
+
+      switch (columnKey) {
+        case "description":
+          return (
+            <div>
+              <span className="block">{movement.description}</span>
+              <span className="block font-normal">
+                {movement.source.card.toString()}
+              </span>
+            </div>
+          );
+        case "categorization":
+          return (
+            <CategorizationField
+              movements={movements}
+              movement={movement}
+              categories={categories}
+            ></CategorizationField>
+          );
+        case "date":
+          return <span>{movement.date}</span>;
+        case "amount":
+          return <span>{currencyFormatter.format(movement.amount)}</span>;
+        case "type":
+          return (
+            <Chip variant="flat" color={colorByMovement(movement.type)}>
+              {movement.type.toString()}
+            </Chip>
+          );
+        case "actions":
+          return (
+            <div className="relative flex justify-end items-center gap-2">
+              <Dropdown>
+                <DropdownTrigger>
+                  <Button isIconOnly size="sm" variant="light">
+                    <Icon path={mdiDotsVertical} size={"1.5rem"}></Icon>
+                  </Button>
+                </DropdownTrigger>
+                <DropdownMenu>
+                  <DropdownItem>View</DropdownItem>
+                  <DropdownItem>Edit</DropdownItem>
+                  <DropdownItem>Delete</DropdownItem>
+                </DropdownMenu>
+              </Dropdown>
+            </div>
+          );
+        default:
+          return <>ERROR</>;
+      }
+    },
+    []
+  );
+
+  return (
+    <Table aria-label="Tabla con movimientos">
+      <TableHeader columns={columns}>
+        {(column) => (
+          <TableColumn
+            key={column.id}
+            align={column.id === "actions" ? "center" : "start"}
+          >
+            {column.name}
+          </TableColumn>
+        )}
+      </TableHeader>
+      <TableBody emptyContent={"No hay movimientos"} items={movementsToDisplay}>
+        {(item) => (
+          <TableRow key={item.source.description + item.amount}>
+            {(columnKey) => (
+              <TableCell>{renderCell(item, columnKey)}</TableCell>
+            )}
+          </TableRow>
+        )}
+      </TableBody>
+    </Table>
+  );
 };
 
 export default MovementsTable;

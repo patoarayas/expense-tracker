@@ -1,14 +1,20 @@
-import React from "react";
-import FileUpload from "./FileUpload/FileUpload";
+import React, { useContext } from "react";
+import FileImport from "./FileImport/FileImport";
 import MovementsTable from "./tables/MovementsTable";
-import { MovementsProvider } from "../utils/store/MovementsContext";
+import {
+  MovementsContext,
+  MovementsProvider,
+} from "../utils/store/MovementsContext";
+import Home from "./views/Home";
+import { CategoriesProvider } from "../utils/store/CategoriesContext";
 
 const App = () => {
   return (
     <React.StrictMode>
       <MovementsProvider>
-        <FileUpload />
-        <MovementsTable />
+        <CategoriesProvider>
+          <Home />
+        </CategoriesProvider>
       </MovementsProvider>
     </React.StrictMode>
   );

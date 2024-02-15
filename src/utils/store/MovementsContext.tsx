@@ -1,8 +1,8 @@
 import react, { useReducer, createContext, type ReactNode } from "react";
-import type { Movement } from "../types/SaldAndMovements";
-
+import type { Movement } from "../types/Movement";
+import { dateStringToDate, getLocalStorage, setLocalStorage } from "../helpers";
 export interface Action {
-  type: "ADD";
+  type: "ADD" | "UPDATE";
   payload: Movement[];
 }
 
@@ -10,6 +10,7 @@ interface MovementsProvider {
   children: ReactNode;
 }
 
+const localStorageKey = "movements";
 export const MovementsContext = createContext([] as Movement[]);
 export const MovementsDispatchContext = createContext(null as any);
 
@@ -28,14 +29,15 @@ export function MovementsProvider({ children }: MovementsProvider) {
 // Reducer
 
 function setInitialState() {
-  return [];
+  return getLocalStorage(localStorageKey,[]);
 }
 
-function reducer(state: Movement[], action: Action) {
+function reducer(state: Movement[], action: Action): Movement[] {
   switch (action.type) {
     case "ADD":
       return add(state, action.payload);
-      break;
+    case "UPDATE":
+      return update(state, action.payload);
     default:
       throw Error("Unknow action");
       break;
@@ -52,11 +54,11 @@ function add(state: Movement[], payload: Movement[]): Movement[] {
             x.currency === movement.currency &&
             x.description === movement.description &&
             x.date === movement.date &&
-            x.origin === movement.origin &&
+            x.origin === movement.origin && // TODO: FIX comparison
             x.type === movement.type &&
-            x.city === movement.city &&
-            x.installments.current === movement.installments.current &&
-            x.installments.total === movement.installments.total
+            x.source === movement.source &&
+            x.installments?.current === movement.installments?.current &&
+            x.installments?.total === movement.installments?.total
           );
         });
         if (!exist) {
@@ -66,5 +68,45 @@ function add(state: Movement[], payload: Movement[]): Movement[] {
     })
     .filter((movement): movement is Movement => movement !== undefined);
 
-  return [...state, ...update];
+  const result = [...state, ...update].sort((a, b) => {
+    return (
+      dateStringToDate(b.date).getTime() - dateStringToDate(a.date).getTime()
+    );
+  });
+
+  setLocalStorage(localStorageKey, result);
+
+  return result;
+}
+
+function update(state: Movement[], payload: Movement[]): Movement[] {
+  // del estado eliminar los que vinene en payload
+  // retornar estado + payload
+  const update: Movement[] = [...state].filter((movement) => {
+    const exist = payload.some((x) => {
+      return (
+        x.amount === movement.amount &&
+        x.currency === movement.currency &&
+        x.description === movement.description &&
+        x.date === movement.date &&
+        x.origin === movement.origin && // TODO: FIX comparison
+        x.type === movement.type &&
+        x.source === movement.source &&
+        x.installments?.current === movement.installments?.current &&
+        x.installments?.total === movement.installments?.total
+      );
+    });
+    if (!exist) {
+      return movement;
+    }
+  });
+  const result = [...update, ...payload];
+  const sorted = result.toSorted((a, b) => {
+    return (
+      dateStringToDate(b.date).getTime() - dateStringToDate(a.date).getTime()
+    );
+  });
+
+  setLocalStorage(localStorageKey, sorted);
+  return sorted;
 }
