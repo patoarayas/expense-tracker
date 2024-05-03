@@ -4,6 +4,15 @@ export function dateStringToDate(str: string, separator: string = "/"): Date {
   return new Date(+dateParts[2], parseInt(dateParts[1]) - 1, +dateParts[0]);
 }
 
+export function formatCurrency(num : number, currency : "CLP" = "CLP" ){
+  const currencyFormatter = new Intl.NumberFormat("es-CL", {
+    style: "currency",
+    currency: currency,
+  });
+
+  return currencyFormatter.format(num)
+}
+
 export function setLocalStorage(key : string, value: any) {
     try {
       window.localStorage.setItem(key, JSON.stringify(value));

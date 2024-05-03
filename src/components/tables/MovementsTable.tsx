@@ -85,8 +85,8 @@ const MovementsTable = ({ movements }: IMovementsTable) => {
         return "danger";
       case MovementType.INCOME.toString():
         return "success";
-      case MovementType.NEUTRAL.toString():
-        return "default";
+      // case MovementType.NEUTRAL.toString():
+      //   return "default";
       default:
         return "default";
     }
@@ -94,7 +94,6 @@ const MovementsTable = ({ movements }: IMovementsTable) => {
 
   const renderCell = React.useCallback(
     (movement: Movement, columnKey: React.Key) => {
-      //const cellValue = movement[columnKey as keyof Movement];
 
       switch (columnKey) {
         case "description":
@@ -102,14 +101,13 @@ const MovementsTable = ({ movements }: IMovementsTable) => {
             <div>
               <span className="block">{movement.description}</span>
               <span className="block font-normal">
-                {movement.source.card.toString()}
+                {movement.source.name.toString()}
               </span>
             </div>
           );
         case "categorization":
           return (
             <CategorizationField
-              movements={movements}
               movement={movement}
               categories={categories}
             ></CategorizationField>
@@ -162,7 +160,7 @@ const MovementsTable = ({ movements }: IMovementsTable) => {
       </TableHeader>
       <TableBody emptyContent={"No hay movimientos"} items={movementsToDisplay}>
         {(item) => (
-          <TableRow key={item.source.description + item.amount}>
+          <TableRow key={`mov_${item.date}_${item.description}_${item.amount}`}>
             {(columnKey) => (
               <TableCell>{renderCell(item, columnKey)}</TableCell>
             )}

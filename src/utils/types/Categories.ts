@@ -2,63 +2,54 @@ import type { ReactNode } from "react";
 
 export enum DefaultCategories {
   ALIMENTACION = "Alimentación",
-  FARMACIA = "Farmacia",
   VIVIENDA = "Vivienda",
-  GIMNASIO = "Gimnasio",
   SALUD = "Salud",
   SERVICIOS = "Servicios",
   ENTRETENCION = "Entretencion",
-  COMBUSTIBLE = "Combustible",
-  REGALOS = "Regalos",
-  VIAJES = "Viajes",
+  OTROS_GASTOS = "Otros gastos",
   VACACIONES = "Vacaciones",
-  VEHICULO = "Vehículo",
   AHORRO = "Ahorro",
-  HERRAMIENTAS = "Herramientas",
+  PASATIEMPOS = "Pasatiempos",
   TRANSPORTE = "Transporte",
-  ROPA = "Ropa",
+  RETAIL = "Retail",
+  EDUCACION = "Educación",
+  SIN_CATEGORIZAR = "Sin categorizar",
 }
 
 export interface Category {
   name: string;
-  //subcategory: string;
+  subcategory?: string;
 }
 
 export function categoryColor(category?: Category): string {
   switch (category?.name) {
     case DefaultCategories.ALIMENTACION:
-      return "bg-green-300 text-green-900";
-    case DefaultCategories.FARMACIA:
-      return "bg-blue-300 text-blue-900";
+      return "lime"; //"bg-lime-300 text-lime-900 fill-lime-300";
     case DefaultCategories.VIVIENDA:
-      return "bg-orange-300 text-orange-900";
-    case DefaultCategories.GIMNASIO:
-      return "bg-purple-300 text-purple-900";
+      return "emerald"; //"bg-emerald-300 text-emerald-900 fill-emerald-300";
     case DefaultCategories.SALUD:
-      return "bg-rose-300 text-rose-900";
+      return "rose"; //"bg-rose-300 text-rose-900 fill-rose-300";
     case DefaultCategories.SERVICIOS:
-      return "bg-emerald-300 text-emerald-900";
+      return "fuchsia"; //"bg-fuchsia-300 text-fuchsia-900 fill-fuchsia-300";
     case DefaultCategories.ENTRETENCION:
-      return "bg-cyan-300 text-cyan-900";
-    case DefaultCategories.COMBUSTIBLE:
-      return "bg-red-300 text-red-900";
-    case DefaultCategories.REGALOS:
-      return "bg-fuchsia-300 text-fuchsia-900";
-    case DefaultCategories.VIAJES:
-      return "bg-teal-300 text-teal-900";
+      return "cyan"; //"bg-cyan-300 text-cyan-900 fill-cyan-300";
     case DefaultCategories.VACACIONES:
-      return "bg-lime-300 text-lime-900";
-    case DefaultCategories.VEHICULO:
-      return "bg-sky-300 text-sky-900";
-    case DefaultCategories.AHORRO:
-      return "bg-violet-300 text-violet-900";
-    case DefaultCategories.HERRAMIENTAS:
-      return "bg-yellow-300 text-yellow-900";
+      return "teal"; //"bg-teal-300 text-teal-900 fill-teal-300";
     case DefaultCategories.TRANSPORTE:
-      return "bg-amber-300 text-amber-900";
-    case DefaultCategories.ROPA:
-      return "bg-pink-300 text-pink-900";
+      return "red"; //"bg-red-300 text-red-900 fill-red-300";
+    case DefaultCategories.AHORRO:
+      return "violet"; //"bg-violet-300 text-violet-900 fill-violet-300";
+    case DefaultCategories.PASATIEMPOS:
+      return "amber"; //"bg-amber-300 text-amber-900 fill-amber-300";
+    case DefaultCategories.RETAIL:
+      return "pink"; //"bg-pink-300 text-pink-900 fill-pink-300";
+    case DefaultCategories.OTROS_GASTOS:
+      return "slate"; //"bg-slate-300 text-slate-900 fill-slate-300";
+    case DefaultCategories.EDUCACION:
+      return "blue"; //"bg-blue-300 text-blue-900 fill-blue-300";
+    case DefaultCategories.SIN_CATEGORIZAR:
+      return "neutral"; //"bg-neutral-300 text-neutral-900 fill-neutral-300";
     default:
-      return "bg-slate-300 text-slate-900";
+      return "neutral"; //"bg-neutral-300 text-neutral-900 fill-neutral-300";
   }
 }

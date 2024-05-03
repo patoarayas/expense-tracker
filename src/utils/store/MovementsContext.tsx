@@ -106,7 +106,7 @@ function update(state: Movement[], payload: Movement[]): Movement[] {
       dateStringToDate(b.date).getTime() - dateStringToDate(a.date).getTime()
     );
   });
-
+  
   setLocalStorage(localStorageKey, sorted);
   return sorted;
 }

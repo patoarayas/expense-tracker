@@ -5,10 +5,11 @@ import React, {
   useContext,
 } from "react";
 import { read, utils } from "xlsx";
-import { MovementsDispatchContext } from "../../utils/store/MovementsContext";
+import { MovementsDispatchContext } from "../../../utils/store/MovementsContext";
 import { Button, Select, SelectItem } from "@nextui-org/react";
-import { type Bank, banks } from "../../utils/banks/Banks";
-import { ProcessFile } from "../../utils/banks/ProcessFIle";
+import { type Bank, banks } from "../../../utils/banks/Banks";
+import { ProcessFile } from "../../../utils/banks/ProcessFIle";
+import { DefaultCategorizationContext } from "../../../utils/store/DefaultCategorizationContext";
 interface IFileImport {
   onCloseModal: () => void;
   setFileImportResult: (fileImportResult: IFileImportResult) => void;
@@ -25,6 +26,7 @@ const FileImport = ({ onCloseModal , setFileImportResult}: IFileImport) => {
 
   const dispatch = useContext(MovementsDispatchContext);
 
+  const defaultCategorization = useContext(DefaultCategorizationContext);
   const handleFileUpload = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       setFile(e.target.files[0]);
@@ -38,7 +40,8 @@ const FileImport = ({ onCloseModal , setFileImportResult}: IFileImport) => {
       const processed = ProcessFile(
         utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]),
         bank!,
-        fileType!
+        fileType!,
+        defaultCategorization
       );
 
       dispatch({ type: "ADD", payload: processed });

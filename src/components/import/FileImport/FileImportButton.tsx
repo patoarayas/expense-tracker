@@ -8,7 +8,7 @@ import {
   useDisclosure,
 } from "@nextui-org/react";
 import FileImport, { type IFileImportResult } from "./FileImport";
-import Alert from "../utils/Alert";
+import Alert from "../../utils/Alert";
 const FileImportButton = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [result, setResult] = useState<IFileImportResult>();
@@ -19,7 +19,7 @@ const FileImportButton = () => {
 
   return (
     <>
-      <div className="m-4 flex flex-row justify-end">
+      <div className="m-1">
         <Button key={"import"} onPress={onOpen} size="sm" color="primary">
           Importar movimientos
         </Button>

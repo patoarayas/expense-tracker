@@ -30,7 +30,6 @@ export function CategoriesProvider({ children }: CategoriesProvider) {
 function setInitialState() : Category[] {
     const defaultCategories = Object.values(DefaultCategories);
     return defaultCategories.map(x => {return {name:x}})
-    //return [{name : DefaultCategories.ALIMENTACION.toString()},{name: DefaultCategories.FARMACIA.toString()}];
   }
   
   function reducer(state: Category[], action: CategoriesStoreAction) {
