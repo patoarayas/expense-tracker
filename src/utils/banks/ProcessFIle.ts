@@ -11,13 +11,19 @@ export const ProcessFile = (
 ): Movement[] => {
   switch (bank.code) {
     case BankCode.BANCO_DE_CHILE:
-      if (fileType === BankFileType.CREDITO) {
-        return BancoDeChile.processCreditMovements(data,defaultCategorization).movements;
-      } 
-      else if (fileType === BankFileType.DEBITO){
-        return BancoDeChile.processDebitMovements(data,defaultCategorization);
-      }
-      else {
+      if (fileType === BankFileType.CREDITO_NO_FACTURADO) {
+        return BancoDeChile.processUnbilledCreditMovements(
+          data,
+          defaultCategorization
+        );
+      } else if (fileType === BankFileType.DEBITO) {
+        return BancoDeChile.processDebitMovements(data, defaultCategorization);
+      } else if (fileType === BankFileType.CREDITO_FACTURADO) {
+        return BancoDeChile.processBilledCreditMovements(
+          data,
+          defaultCategorization
+        );
+      } else {
         throw Error("Unsuported bank file");
       }
 

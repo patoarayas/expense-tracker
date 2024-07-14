@@ -9,7 +9,8 @@ export enum BankCode {
 }
 
 export enum BankFileType {
-  CREDITO = "Crédito",
+  CREDITO_NO_FACTURADO = "Crédito - Movimientos no facturados",
+  CREDITO_FACTURADO = "Crédito - Movimientos facturados",
   DEBITO = "Débito",
 }
 
@@ -17,6 +18,6 @@ export const banks: Bank[] = [
   {
     code: BankCode.BANCO_DE_CHILE,
     description: "Banco de Chile",
-    fileTypes: [BankFileType.CREDITO, BankFileType.DEBITO],
+    fileTypes: [BankFileType.CREDITO_NO_FACTURADO, BankFileType.CREDITO_FACTURADO, BankFileType.DEBITO],
   },
 ];
