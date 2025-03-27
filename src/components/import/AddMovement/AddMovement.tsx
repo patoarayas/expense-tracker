@@ -14,8 +14,6 @@ import {
   getSourceType,
 } from "../../../utils/types/Movement";
 import { CategoriesContext } from "../../../utils/store/CategoriesContext";
-import DateInput from "../../utils/DateInput";
-import type { DateValueType } from "react-tailwindcss-datepicker";
 export interface IAddMovementResult {
   result: boolean;
   message: string;
@@ -74,7 +72,7 @@ const AddMovement = () => {
 
   // Fecha
 
-  const [date, setDate] = useState<DateValueType | null>();
+  const [date, setDate] = useState<any | null>();
 
   return (
     <form>
@@ -87,14 +85,7 @@ const AddMovement = () => {
           min={0}
         ></Input>
         <div className="" >
-          <DateInput
-            value={date}
-            onChange={(v) => setDate(v)}
-            asSingle
-            useRange={false}
-            showFooter={false}
-            showShortcuts={false}
-          />
+         
         </div>
         <Select  label="Origen" size="sm">
           {sourceTypes.map((x) => {

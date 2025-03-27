@@ -24,7 +24,6 @@ import { DefaultCategorizationDispatchContext } from "../../../utils/store/Defau
 import Icon from "@mdi/react";
 import { mdiPencil } from "@mdi/js";
 import { formatCurrency } from "../../../utils/helpers";
-
 interface ICategorizationField {
   movement: Movement;
   categories: Category[];

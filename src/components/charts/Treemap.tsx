@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from "react";
+import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 import type { Movement } from "../../utils/types/Movement";
 import { MovementsContext } from "../../utils/store/MovementsContext";
 import { CategoriesContext } from "../../utils/store/CategoriesContext";
@@ -23,21 +23,30 @@ const Treemap = () => {
 
   const [root, setRoot] = useState<d3.HierarchyRectangularNode<ITree>>();
   const [totalValue, setTotalValue] = useState<number | undefined>(undefined);
-  const [screenSize, setScreenSize] = useState({
-    width: window.innerWidth * 0.75,
-    height: window.innerHeight / 1.618,
+
+  const [screenSize, setScreenSize] = useState(() => {
+    let baseWidth = 0;
+  
+   
+      baseWidth = window.innerWidth * 0.7;
+    
+    return {
+      width: baseWidth,
+      height: baseWidth / 1.618,
+    };
   });
 
   useEffect(() => {
     const handleResize = () => {
+      const baseWidth = window.innerWidth * 0.7;
+
       setScreenSize({
-        width: window.innerWidth * 0.9,
-        height: window.innerWidth / 1.618,
+        width: baseWidth,
+        height: baseWidth / 1.618,
       });
     };
 
     window.addEventListener("resize", handleResize);
-
     // Clean up the event listener when the component unmounts
     return () => {
       window.removeEventListener("resize", handleResize);
@@ -82,7 +91,7 @@ const Treemap = () => {
 
     const totalValue = data.map((x) => x.value).reduce((a, b) => a + b, 0);
     setTotalValue(totalValue);
-  }, [movements]);
+  }, [movements, screenSize]);
 
   return (
     <>

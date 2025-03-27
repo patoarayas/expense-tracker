@@ -2,7 +2,7 @@ import react, { useReducer, createContext, type ReactNode } from "react";
 import type { Movement } from "../types/Movement";
 import { dateStringToDate, getLocalStorage, setLocalStorage } from "../helpers";
 export interface Action {
-  type: "ADD" | "UPDATE";
+  type: "ADD" | "UPDATE" | "DELETE";
   payload: Movement[];
 }
 
@@ -29,7 +29,7 @@ export function MovementsProvider({ children }: MovementsProvider) {
 // Reducer
 
 function setInitialState() {
-  return getLocalStorage(localStorageKey,[]);
+  return getLocalStorage(localStorageKey, []);
 }
 
 function reducer(state: Movement[], action: Action): Movement[] {
@@ -38,6 +38,8 @@ function reducer(state: Movement[], action: Action): Movement[] {
       return add(state, action.payload);
     case "UPDATE":
       return update(state, action.payload);
+    case "DELETE":
+      return dlt(state, action.payload);
     default:
       throw Error("Unknow action");
       break;
@@ -106,7 +108,38 @@ function update(state: Movement[], payload: Movement[]): Movement[] {
       dateStringToDate(b.date).getTime() - dateStringToDate(a.date).getTime()
     );
   });
-  
+
+  setLocalStorage(localStorageKey, sorted);
+  return sorted;
+}
+
+function dlt(state: Movement[], payload: Movement[]): Movement[] {
+  const update: Movement[] = [...state].filter((movement) => {
+    const exist = payload.some((x) => {
+      return (
+        x.amount === movement.amount &&
+        x.currency === movement.currency &&
+        x.description === movement.description &&
+        x.date === movement.date &&
+        x.origin === movement.origin && // TODO: FIX comparison
+        x.type === movement.type &&
+        x.source === movement.source &&
+        x.installments?.current === movement.installments?.current &&
+        x.installments?.total === movement.installments?.total
+      );
+    });
+    if (!exist) {
+      return movement;
+    }
+  });
+
+  const result = [...update];
+  const sorted = result.toSorted((a, b) => {
+    return (
+      dateStringToDate(b.date).getTime() - dateStringToDate(a.date).getTime()
+    );
+  });
+
   setLocalStorage(localStorageKey, sorted);
   return sorted;
 }

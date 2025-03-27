@@ -29,6 +29,7 @@ import { mdiDotsVertical } from "@mdi/js";
 import CategorizationField from "./partials/CategorizationField";
 import { CategoriesContext } from "../../utils/store/CategoriesContext";
 import { dateStringToDate } from "../../utils/helpers";
+import DeleteMovement from "./partials/DeleteMovement";
 
 interface IMovementsTable {
   movements: Movement[];
@@ -125,18 +126,7 @@ const MovementsTable = ({ movements }: IMovementsTable) => {
         case "actions":
           return (
             <div className="relative flex justify-end items-center gap-2">
-              <Dropdown>
-                <DropdownTrigger>
-                  <Button isIconOnly size="sm" variant="light">
-                    <Icon path={mdiDotsVertical} size={"1.5rem"}></Icon>
-                  </Button>
-                </DropdownTrigger>
-                <DropdownMenu>
-                  <DropdownItem>View</DropdownItem>
-                  <DropdownItem>Edit</DropdownItem>
-                  <DropdownItem>Delete</DropdownItem>
-                </DropdownMenu>
-              </Dropdown>
+              <DeleteMovement movement={movement}></DeleteMovement>
             </div>
           );
         default:

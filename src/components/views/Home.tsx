@@ -9,6 +9,7 @@ const Home = () => {
   const movements = useContext(MovementsContext);
   return (
     <>
+      
       <Treemap></Treemap>
       <div className="px-6">
         <div className=" m-4 flex flex-row justify-end">
